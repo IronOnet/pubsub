@@ -44,28 +44,31 @@ func main(){
 		log.Fatal("error could not start the queue: ", err) 
 	}
 
-	for _, record := range records{
-		userJSON, err := json.Marshal(record)
-		if err != nil{
-			log.Println("Error marshalling user: ", err) 
-			continue 
-		}
-
-		// Publish the serialized data to RabbitMQ 
-		err = ch.Publish(
-			"", 
-			q.Name, // Routing key (queue name)  
-			false, // Mandatory 
-			false, // Immediate 
-			amqp.Publishing{
-				ContentType: "application/json", 
-				Body: userJSON,
-			})
-
-		if err != nil{
-			log.Println("Error publishing user: ", err) 
-		} else{
-			fmt.Println("user published: ", record.ID)
+	for{
+		for _, record := range records{
+			userJSON, err := json.Marshal(record)
+			if err != nil{
+				log.Println("Error marshalling user: ", err) 
+				continue 
+			}
+	
+			// Publish the serialized data to RabbitMQ 
+			err = ch.Publish(
+				"", 
+				q.Name, // Routing key (queue name)  
+				false, // Mandatory 
+				false, // Immediate 
+				amqp.Publishing{
+					ContentType: "application/json", 
+					Body: userJSON,
+				})
+	
+			if err != nil{
+				log.Println("Error publishing user: ", err) 
+			} else{
+				fmt.Println("user published: ", record.ID)
+			}
 		}
 	}
+	
 }
