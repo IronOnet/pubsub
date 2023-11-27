@@ -15,6 +15,16 @@ services:
     ports: 
       - "3306:3306" 
 
+  seeder: 
+    image: "mysql:latest" 
+    volumes: 
+      - ./sql/schema.sql:/schema.sql 
+    environment: 
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true" 
+    entrypoint: ["bash", "-c", "sleep 10 && mysql --user=root --host=mysql --port=3306 < /schema.sql && exit"]
+    depends_on: 
+      - mysql 
+
   redis: 
     image: "redis:latest" 
     ports: 
