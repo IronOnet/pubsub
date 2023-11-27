@@ -1,0 +1,53 @@
+version: '3' 
+services: 
+  rabbitmq: 
+    image: "rabbitmq:latest" 
+    ports: 
+      - "5672:5672" 
+
+  mysql: 
+    image: "mysql:latest" 
+    environment: 
+      MYSQL_ROOT_PASSWORD: "password" 
+      MYSQL_DATABASE : "pubsub" 
+    volumes: 
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql 
+    ports: 
+      - "3306:3306" 
+
+  seeder: 
+    image: "mysql:latest" 
+    volumes: 
+      - ./sql/schema.sql:/schema.sql 
+    environment: 
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true" 
+    entrypoint: ["bash", "-c", "sleep 10 && mysql --user=root --host=mysql --port=3306 < /schema.sql && exit"]
+    depends_on: 
+      - mysql 
+
+  redis: 
+    image: "redis:latest" 
+    ports: 
+      - "6379:6379"
+
+  publisher: 
+    build: 
+      context: ./publisher
+      dockerfile: Dockerfile 
+    depends_on: 
+      - rabbitmq 
+
+  consumer: 
+    build: 
+      context: ./consumer 
+      dockerfile: Dockerfile 
+    depends_on: 
+      - mysql 
+      - redis 
+      - rabbitmq 
+
+    environment: 
+      RABBITMQ_ADDRESS: "rabbitmq:5672" 
+      MYSQL_CONNECTION_STRING: "root:password(mysql:3306)/pubsub?charset=utf8&parseTime=True&loc=Local"
+      REDIS_ADDRESS: "redis:6379" 
+      WEBSERVER_PORT: 8000 
