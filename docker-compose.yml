@@ -10,7 +10,7 @@ services:
     environment: 
       MYSQL_ROOT_PASSWORD: "password" 
       MYSQL_DATABASE : "pubsub" 
-    volume: 
+    volumes: 
       - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql 
     ports: 
       - "3306:3306" 
@@ -22,15 +22,15 @@ services:
 
   publisher: 
     build: 
-      context: . 
-      dockerfile: /pubisher/Dockerfile 
+      context: ./publisher
+      dockerfile: Dockerfile 
     depends_on: 
       - rabbitmq 
 
   consumer: 
     build: 
-      context: . 
-      dockerfile: /consumer/Dockerfile 
+      context: ./consumer 
+      dockerfile: Dockerfile 
     depends_on: 
       - mysql 
       - redis 

@@ -1,13 +1,18 @@
-FROM golang:latest  
+FROM golang:1.20.6-alpine
 
 # Set the working directory to /app 
 WORKDIR /app 
 
+# Copy go.mod and go.sum 
+COPY go.mod go.sum ./ 
+
+RUN go mod download 
+
 # Copy the content of the the current folder to /app 
-COPY . .  
+COPY . ./
 
 # Build the Go application 
-RUN go build cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build cmd/main.go
 
 EXPOSE 5672 
 
