@@ -94,8 +94,8 @@ func (u *UserHandler) GetUserByEmail(c *gin.Context) {
 
 // TODO: Write Swagger Specification Above
 func (u *UserHandler) GetUsers(c *gin.Context) {
-	limitStr := c.Param("limit")
-	skipStr := c.Param("skip")
+	limitStr := c.Query("limit")
+	skipStr := c.Query("skip")
 
 	limit, err := strconv.ParseInt(limitStr, 10, 64)
 	if err != nil {

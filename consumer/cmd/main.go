@@ -45,9 +45,10 @@ func main(){
 
 	// Initialize data consumption from  
 	// the rabbitmq queue 
-	go initRabbitMqChannel() 
+	go initRabbitMqChannel()
+	initApiServer()
 	// Initialize the rest api server 
-	go initApiServer()
+	
 }
 
 
@@ -66,13 +67,14 @@ func initApiServer(){
 	router := gin.Default() 
 
 	router.GET("/user/:id", ApiHandler.GetOneUserById) 
-	router.GET("/user/:email", ApiHandler.GetUserByEmail) 
-	router.GET("/users/:limit/:skip", ApiHandler.GetUsers) 
+	//router.GET("/user/:email", ApiHandler.GetUserByEmail) 
+	router.GET("/users/", ApiHandler.GetUsers) 
 
 	err := router.Run(":" + strconv.Itoa(WEBSERVER_PORT)) 
 	if err != nil{
 		log.Fatal("failed to start the api server: ", err) 
 	}
+
 	
 }
 
