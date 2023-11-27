@@ -61,7 +61,7 @@ func main(){
 				ContentType: "application/json", 
 				Body: userJSON,
 			})
-		log.Printf("record %v published", record) 
+		//log.Printf("record %v published", record) 
 
 		if err != nil{
 			log.Println("Error publishing user: ", err) 
