@@ -66,6 +66,7 @@ func initApiServer(){
 
 	router := gin.Default() 
 
+	router.GET("/", ApiHandler.HelloHandler) 
 	router.GET("/user/:id", ApiHandler.GetOneUserById) 
 	//router.GET("/user/:email", ApiHandler.GetUserByEmail) 
 	router.GET("/users/", ApiHandler.GetUsers) 

@@ -29,6 +29,10 @@ func NewUserHandler(ctx context.Context, store *store.UserStoreSql, cache *redis
 	}
 }
 
+func (u *UserHandler) HelloHandler(c *gin.Context){
+	c.JSON(http.StatusOK, gin.H{"message": "Hello World"})
+}
+
 // TODO: Write Swagger Specification Above
 func (u *UserHandler) GetOneUserById(c *gin.Context) {
 	idStr := c.Param("id")
@@ -53,7 +57,7 @@ func (u *UserHandler) GetOneUserById(c *gin.Context) {
 	user, err := u.Store.GetUserById(context.Background(), idUint)
 	if err != nil {
 		log.Println("error getting user by id:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch user"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "failed to fetch user"})
 		return
 	}
 
