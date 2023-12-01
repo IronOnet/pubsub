@@ -14,7 +14,7 @@ COPY . ./
 # Build the Go application 
 RUN CGO_ENABLED=0 GOOS=linux go build cmd/main.go
 
-EXPOSE 5672 
+
 
 # Command to run the executable 
 CMD ["./main"] 

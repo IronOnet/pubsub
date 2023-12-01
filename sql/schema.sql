@@ -14,5 +14,5 @@ CREATE TABLE users(
     deleted_at TIMESTAMP NULL, 
     merged_at TIMESTAMP NULL, 
     parent_user_id INT, 
-    FOREIGN KEY (parent_user_id) REFERENCES users(id)
-)
+    --FOREIGN KEY (parent_user_id) REFERENCES users(id)--
+);

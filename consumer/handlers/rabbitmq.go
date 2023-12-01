@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/irononet/consumer/store"
@@ -17,9 +18,9 @@ type UserMessage struct {
 	FirstName    string `json:"first_name"`
 	LastName     string `json:"last_name"`
 	EmailAddress string `json:"email_address"`
-	CreatedAt    time.Time `json:"created_at"`
-	DeletedAt    time.Time `json:"deleted_at"`
-	MergedAt     time.Time `json:"merged_at"`
+	CreatedAt    string `json:"created_at"`
+	DeletedAt    string `json:"deleted_at"`
+	MergedAt     string `json:"merged_at"`
 	ParentUserId int  `json:"parent_user_id"`
 }
 
@@ -78,15 +79,34 @@ func InitChannel(connString string, userStore store.UserStoreSql) error {
 			continue 
 		}
 
+		createdAt, err := convertStringToUnixTimeStamp(userMsg.CreatedAt) 
+		log.Println(createdAt)
+		if err != nil{
+			panic(err) 
+		}
+		// deletedAt, err := convertStringToUnixTimeStamp(userMsg.DeletedAt) 
+		// if err != nil{
+		// 	panic(err) 
+		// }
+		// mergedAt, err := convertStringToUnixTimeStamp(userMsg.MergedAt) 
+		// if err != nil{
+		// 	panic(err) 
+		// }
+
+		// parentUserId, err := strconv.ParseInt(userMsg.ParentUserId, 10, 64) 
+		// if err != nil{
+		// 	panic(err)
+		// }
+
 		user := &store.UserSql{
 			ID: uint(userMsg.ID), 
 			FirstName: userMsg.FirstName, 
 			LastName: userMsg.LastName, 
 			EmailAddress: userMsg.EmailAddress, 
-			CreatedAt: userMsg.CreatedAt, 
-			DeletedAt: userMsg.DeletedAt, 
-			MergedAt: userMsg.MergedAt, 
-			ParentUserId: uint(userMsg.ParentUserId),
+			//CreatedAt: createdAt, 
+			DeletedAt: time.Date(2009, 11, 17, 20, 34, 58, 651387237, time.UTC), 
+			MergedAt: time.Date(2009, 11, 17, 20, 34, 58, 651387237, time.UTC),  
+			ParentUserId: 8,
 		}
 
 		err = userStore.CreateUser(context.Background(), user)
@@ -97,5 +117,15 @@ func InitChannel(connString string, userStore store.UserStoreSql) error {
 	}
 	return nil 
 	
+}
+
+func convertStringToUnixTimeStamp(timeStr string) (time.Time, error){
+	seconds, err := strconv.ParseInt(timeStr, 10, 64) 
+	if err != nil{
+		return time.Time{}, err 
+	}
+
+	t := time.Unix(seconds, 0) 
+	return t, nil 
 }
 
