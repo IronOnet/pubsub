@@ -8,58 +8,50 @@ services:
     ports: 
       - "5672:5672" 
       - "15672:15672"
-    networks: 
-      - my_network 
-  mysql: 
+  db: 
     image: "mysql:latest" 
     environment: 
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password 
       MYSQL_DATABASE : pubsub
-      MYSQL_USER: root
+      MYSQL_USER: mysql 
     volumes: 
       - mysqldata:/var/lib/mysql
       - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     ports: 
-      - "3306:3306"  
-    networks: 
-      - my_network
+      - "3306:3306" 
 
   redis: 
     image: "redis:latest" 
     ports: 
       - "6379:6379"
-    networks: 
-      - my_network 
 
   publisher: 
     build: 
       context: ./publisher
       dockerfile: Dockerfile 
-    restart: always 
+    restart: on-failure
     depends_on: 
       - rabbitmq 
     environment: 
       RABBITMQ_ADDRESS: "rabbitmq:5672"
+    
 
   consumer: 
     build: 
       context: ./consumer 
       dockerfile: Dockerfile 
     restart: always 
+    ports: 
+      - "8000:8000"
+    links: 
+      - db:database
     depends_on: 
-      - mysql 
+      - db
       - redis 
       - rabbitmq 
 
-    environment: 
-      RABBITMQ_ADDRESS: "rabbitmq:5672" 
-      MYSQL_CONNECTION_STRING: "root:password@tcp(mysql:3306)/pubsub?charset=utf8&parseTime=True&loc=Local"
-      REDIS_ADDRESS: "redis:6379" 
-      WEBSERVER_PORT: 8000 
 
-networks: 
-  my_network: 
-    driver: bridge 
 
 volumes: 
   mysqldata: 

@@ -25,7 +25,17 @@ type UserMessage struct {
 }
 
 func InitChannel(connString string, userStore store.UserStoreSql) error {
-	conn, err := amqp.Dial(connString) 
+	var conn *amqp.Connection 
+	var err error 
+
+	for i:= 0; i <= 5; i++{
+		conn, err = amqp.Dial(connString) 
+		if err == nil{
+			break 
+		}
+		time.Sleep(5 * time.Second) 
+	}
+	// conn, err := amqp.Dial(connString) 
 	if err != nil{
 		return errors.New(fmt.Sprintf("could not connect to broker an error occurred %s", err)) 
 	}

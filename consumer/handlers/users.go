@@ -159,3 +159,19 @@ func (u *UserHandler) setUserInCache(key string, user *store.UserSql) error {
 
 	return u.Cache.Set(key, userJSON, 1*time.Hour).Err()
 }
+
+func (u *UserHandler) setUsersInCache(key string, users []*store.UserSql) error{
+	var usersJson []byte 
+	for _, user := range users{
+		userJson, err := json.Marshal(user) 
+		if err != nil{
+			return errors.New(fmt.Sprintf("error marshalling user: %v", err)) 
+		}
+		usersJson = append(usersJson, userJson...)
+	}
+	return u.Cache.Set(key, usersJson, 1*time.Hour).Err() 
+}
+
+func (u *UserHandler) getUsersFromCache(key string) error{
+	return nil 
+}
