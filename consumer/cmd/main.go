@@ -68,6 +68,9 @@ func initApiServer() {
 	//router.GET("/user/:email", ApiHandler.GetUserByEmail)
 	router.GET("/users/", ApiHandler.GetUsers)
 
+	// SSE stream
+	//router.GET("/stream/", handlers.StreamEvents)
+
 	err := router.Run(":" + strconv.Itoa(WEBSERVER_PORT))
 	if err != nil {
 		log.Fatal("failed to start the api server: ", err)
@@ -76,7 +79,11 @@ func initApiServer() {
 }
 
 func getMysqlDb(connectionStr string) *gorm.DB {
-	db, err := gorm.Open(mysql.Open(connectionStr), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(connectionStr), &gorm.Config{
+		// Optimization tweaks to speed up query write performance
+		SkipDefaultTransaction: true,
+		PrepareStmt:            true,
+	})
 	if err != nil {
 		log.Println("could not connect to database an error occurred: ", err)
 		return nil
