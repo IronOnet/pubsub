@@ -1,7 +1,7 @@
 # pubsub
 Viswals publisher subscriber microservice challenge.
 
-## APPROX ETA  
+## APPROX ETA  UNTIL Completion (initial) 
 ~14 hours 
 
 ## Difficulty 
@@ -13,62 +13,30 @@ Viswals publisher subscriber microservice challenge.
 
 - Go version: 1.20.6
 
-### Without Docker (for the publisher and consumer services)
+### Docker (for the publisher and consumer services)
 
 
-Open a new terminal and run
+Open a new terminal and run the following command at the root directory
 
 ```bash
     docker-compose up 
 ```
-This will make sure that the mysql, redis and rabbitmq containers are initialized
 
-#### Publisher service 
+You will have to wait at least 1 minute for all the services to be bootstraped and the data 
+transfer from the publisher service to the consumer to start.
 
-To run the publisher service open another terminal and run 
 
-```bash
-
-cd publisher/ 
-
-# download dependencies 
-go mod download
-
-# run the main file 
-go run cmd/main.go 
-
-```
-
-#### Consumer service  
-
-To run the consumer service,  at the root of the project run 
-
-```bash 
-
-cd consumer/ 
-
-# download dependencies 
-go mod download 
-
-# run the main file 
-go run cmd/main.go 
-
-```
-
-##### REST API
+## REST API
 
 Once the server is started and the rabbitmq go routine has finished writing to the database, go to address (localhost:8000/user and localhost:8000/users) to 
 interact with the API endpoints 
 
-- user endpoint : Returns a single user 
+### Endpoints 
 
-This endpoint acccepts the following url format : /user/:id (example http://localhost:8000/user/10) 
-
-- users endpoint: Returns an array of users 
-
-This endpoint accepts the following url format : /users?limit=&skip= (example http://localhost:8000/users?limit=100&skip=1) 
+- http://localhost/8000/user/:id : returns a single user with the specified Id
+- http://localhost/8000/users/?limit=100&skip=1 returns an array of users if the "limit" and "skip" parameters are not provided it defaults to a limit of 100, and a skip of 1
 
 
-## RUN with docker-compose 
+## Frontend & Server Sent events
 
-This method does not work at the moment due to a latent bug that needs to be found. 
+Not supported.
