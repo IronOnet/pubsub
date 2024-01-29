@@ -33,8 +33,15 @@ services:
     restart: on-failure
     depends_on: 
       - rabbitmq 
+      - db 
+      - redis 
     environment: 
       RABBITMQ_ADDRESS: "rabbitmq:5672"
+    healthcheck: 
+      test : ["CMD", "nc", "-z", "rabbitmq", "5672"] 
+      interval: 10s 
+      timeout: 5s
+      retries: 5
     
 
   consumer: 
@@ -50,6 +57,8 @@ services:
       - db
       - redis 
       - rabbitmq 
+      - publisher
+    command: ["sh", "-c", "sleep 20; ./main"] 
 
 
 

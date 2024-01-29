@@ -137,6 +137,10 @@ func TestUserStore_GetUsers(t *testing.T) {
 	assert.Len(t, retrievedUsers, 2)
 }
 
+func TestUsersql_GetUsersWithFilters(t *testing.T){
+	
+}
+
 func TestUserSql_TableName(t *testing.T) {
 	user := &UserSql{}
 	assert.Equal(t, "users", user.TableName())

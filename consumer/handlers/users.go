@@ -98,21 +98,23 @@ func (u *UserHandler) GetUserByEmail(c *gin.Context) {
 
 // TODO: Write Swagger Specification Above
 func (u *UserHandler) GetUsers(c *gin.Context) {
-	limitStr := c.Query("limit")
-	skipStr := c.Query("skip")
-
+	limitStr := c.DefaultQuery("limit", "100")
+	skipStr := c.DefaultQuery("skip", "1")
+	
 	limit, err := strconv.ParseInt(limitStr, 10, 64)
 	if err != nil {
 		log.Println("error converting limit to integer:", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid limit"})
-		return
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("invalid limit value %d: ", limit)})
+		return 
+		
 	}
 
 	skip, err := strconv.ParseInt(skipStr, 10, 64)
 	if err != nil {
 		log.Println("error converting skip to integer:", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid skip"})
-		return
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("invalid skip value: %d", skip)})
+		return 
+		
 	}
 
 	limitInt := int(limit)
